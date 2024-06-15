@@ -287,7 +287,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
                alt="Campaign image"
                className="h-96 object-cover"
                shadow="md"
-               src={campaign.data?.imageUrl ? campaign.data.imageUrl : ""}
+               src="https://xrplgrants.org/images/judges/andrew-mangle.png"
                width="100%"
              />
            </div>
@@ -317,8 +317,8 @@ export default function Campaign({ params }: { params: { id: string } }) {
                <Input
                  name="walletAddress"
                  className="text-sm"
-                 label="Pay From"
-                 placeholder="Enter Your Wallet Address"
+                 label="Pay From (Institution Open Payment Address)"
+                 placeholder="Enter Institution Open Payment Address"
                  value={senderWalletAddress}
                  onValueChange={setWalletAddress}
                  color="primary"
@@ -327,7 +327,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
                <Input
                  name="receiverAddress"
                  className="text-sm"
-                 label="Pay To"
+                 label="Pay To (Student Open Payment Address)"
                  placeholder="Open payment address for student"
                  value={campaign.data?.walletAddress}
                  color="danger"
@@ -338,7 +338,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
                  type="number"
                  className="text-sm"
                  startContent={senderWalletDetails.data?.data.assetCode}
-                 label="amount"
+                 label="Account Payment"
                  placeholder="Amount being sent"
                  value={donation}
                  onValueChange={setDonation}
@@ -355,7 +355,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
                  color="primary"
                  type="submit"
                >
-                 Donate
+                 Deposit Now
                </Button>
              </div>
            </form>

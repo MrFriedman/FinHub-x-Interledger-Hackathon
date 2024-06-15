@@ -78,7 +78,7 @@ export const Navbar = () => {
        <SignedOut>
          <NavbarItem>
            <Button as={Link} href="/sign-in" size="md" color="primary">
-             Sign In
+             Organization Sign in
            </Button>
          </NavbarItem>
          <NavbarItem>
@@ -89,7 +89,7 @@ export const Navbar = () => {
              color="primary"
              variant="bordered"
            >
-             SIGN UP
+             Organization Registration
            </Button>
          </NavbarItem>
        </SignedOut>
