@@ -1,6 +1,8 @@
 import { createTRPCRouter, publicProcedure } from "$/src/server/api/trpc";
 import { type Response } from "$/src/utils/types";
 import { z } from "zod";
+import { isDemoMode } from "$/src/demo/mode";
+import { demoOpenPayments } from "$/src/demo/open-payments";
 import {
   createIncomingPayment,
   createOutgoingPayment,
@@ -19,6 +21,8 @@ export const openPaymentsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input }) => {
+      if (isDemoMode()) return demoOpenPayments.getWalletDetails(input);
+
       const response: Response = {
         success: true,
         message: "wallet details obtained",
@@ -45,6 +49,8 @@ export const openPaymentsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input }) => {
+      if (isDemoMode()) return demoOpenPayments.createIncomingPayment(input);
+
       const response: Response = {
         success: true,
         message: "incoming payment created",
@@ -80,6 +86,8 @@ export const openPaymentsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input }) => {
+      if (isDemoMode()) return demoOpenPayments.createQuote(input);
+
       const response: Response = {
         success: true,
         message: "qoute created",
@@ -110,6 +118,10 @@ export const openPaymentsRouter = createTRPCRouter({
   getOutgoingPaymentAuthorization: publicProcedure
     .input(opAuthSchema)
     .query(async ({ input }) => {
+      if (isDemoMode()) {
+        return demoOpenPayments.getOutgoingPaymentAuthorization(input);
+      }
+
       const response: Response = {
         success: true,
         message: "wallet details obtained",
@@ -139,6 +151,8 @@ export const openPaymentsRouter = createTRPCRouter({
   createOutgoingPayment: publicProcedure
     .input(opCreateSchema)
     .query(async ({ input }) => {
+      if (isDemoMode()) return demoOpenPayments.createOutgoingPayment(input);
+
       const response: Response = {
         success: true,
         message: "outgoing payment created",

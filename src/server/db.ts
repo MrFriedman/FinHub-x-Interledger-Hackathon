@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
 import { env } from "$/src/env";
+import { isDemoMode } from "$/src/demo/mode";
+import { getMemoryDb } from "$/src/demo/memory-db";
 
 const createPrismaClient = () =>
   new PrismaClient({
@@ -12,6 +14,16 @@ const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
-export const db = globalForPrisma.prisma ?? createPrismaClient();
+function getPrismaClient() {
+  const client = globalForPrisma.prisma ?? createPrismaClient();
+  if (env.NODE_ENV !== "production") globalForPrisma.prisma = client;
+  return client;
+}
 
-if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+/**
+ * Demo deployments never construct a Prisma client. The memory adapter
+ * implements the calls this app makes and is cast so existing routers stay put.
+ */
+export const db = (
+  isDemoMode() ? getMemoryDb() : getPrismaClient()
+) as PrismaClient;

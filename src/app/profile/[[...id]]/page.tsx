@@ -14,7 +14,7 @@ import {
  ModalFooter,
  useDisclosure,
 } from "@nextui-org/react";
-import { useUser } from "@clerk/nextjs";
+import { useAppUser } from "$/src/demo/auth";
 import { type UserDetail } from "$/src/utils/types";
 import { Card, Link } from "@nextui-org/react";
 import {
@@ -35,7 +35,7 @@ import CampaignCard from "../../_components/Campaign/card";
 
 
 export default function Profile({ params }: { params: { id: string } }) {
- const { user: clerkUser } = useUser();
+ const { user: clerkUser } = useAppUser();
  const [edit, setEdit] = React.useState(false);
  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -102,10 +102,12 @@ export default function Profile({ params }: { params: { id: string } }) {
 
 
          <User
-           name="University of Cape Town"
-           description="anythingyouwantto@uct.edu"
+           name={userDetail?.firstName ?? "University of Cape Town"}
+           description={userDetail?.email ?? "FinancialAid@uct.ac.za"}
            avatarProps={{
-             src: "https://www.lstmed.ac.uk/sites/default/files/styles/mc-580-16x9-node/public/content/pages/images/UCT.jpeg?itok=O0dc31th",
+             src:
+               userDetail?.imageUrl ??
+               "https://www.lstmed.ac.uk/sites/default/files/styles/mc-580-16x9-node/public/content/pages/images/UCT.jpeg?itok=O0dc31th",
              size: "lg",
              isBordered: true,
            }}

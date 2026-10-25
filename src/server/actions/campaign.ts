@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { db } from "$/src/server/db";
+import { getRequestAuth } from "$/src/server/request-auth";
 import { type Response } from "$/src/utils/types";
 
 export async function createCampaign(previousState: any, formData: FormData) {
@@ -24,7 +24,7 @@ export async function createCampaign(previousState: any, formData: FormData) {
     amount: Number(formData.get("amount")) ?? 0,
   };
 
-  const { userId } = auth();
+  const { userId } = getRequestAuth();
 
   if (!userId) {
     response.message = "Please sign-in first";

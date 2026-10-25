@@ -21,7 +21,7 @@ import { type Campaign } from "@prisma/client";
 import { FaCreditCard } from "react-icons/fa";
 import { createCampaign } from "$/src/server/actions/campaign";
 import { useFormState } from "react-dom";
-import { useUser } from "@clerk/nextjs";
+import { useAppUser } from "$/src/demo/auth";
 import { api } from "$/src/trpc/react";
 
 
@@ -33,7 +33,7 @@ export default function CampaignCard({
  refreshCampaigns: () => void;
 }) {
  const { isOpen, onOpen, onOpenChange } = useDisclosure();
- const { user } = useUser();
+ const { user } = useAppUser();
 
 
  const [campaignCreatedState, createCampaignAction] = useFormState(

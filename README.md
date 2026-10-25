@@ -177,10 +177,22 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ---
 
+#### Demo without secrets
+
+If `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, or `CLERK_SECRET_KEY` is missing, the app sets `NEXT_PUBLIC_DEMO_MODE` and skips env validation. Clerk is replaced by a University of Cape Town demo user, tRPC reads seeded in-memory students, funding requests, donors, and transactions, and Open Payments steps are simulated. Set the Clerk and database variables (and leave `NEXT_PUBLIC_DEMO_MODE` unset or `false`) to use Prisma, Clerk, and live Open Payments again.
+
 #### Deploy on Vercel
 
-The easiest way to deploy your **Next.js** app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Import the repo as a Next.js project. For the hackathon demo, set one environment variable and leave every secret empty:
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Name | Value | Environments |
+| --- | --- | --- |
+| `SKIP_ENV_VALIDATION` | `1` | Production, Preview, Development |
+
+Do not set `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, or the Open Payments variables. The build command is `pnpm build` (or `npm run build`), which generates the Prisma client with a placeholder URL and then runs `next build`. Node.js 18 or newer is required.
+
+Framework preset: Next.js. Install command: the package manager Vercel detects (`pnpm install`). Output directory: Next.js default. No root directory override.
+
+Adding real Clerk, database, or Open Payments credentials later requires a new deployment so `NEXT_PUBLIC_DEMO_MODE` is inlined as `false`.
 
 ---

@@ -28,12 +28,13 @@ export async function createTestContext(createDBUser: boolean) {
     const lastName = faker.person.lastName();
     const user = await ctx.db.user.create({
       data: {
-        name: faker.person.firstName(),
+        userId: ctx.session?.userId ?? randomInt(10000).toString(),
+        firstName,
         email: `${firstName}.${lastName}@test.com`,
         about: `about ${firstName}`,
       },
     });
-    ctx.session!.userId = user.id;
+    ctx.session!.userId = user.userId;
   }
 
   return ctx;

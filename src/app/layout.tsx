@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { Providers } from "./providers";
 import { Navbar } from "$/src/app/_components/Navbar/navbar";
 import { Footer } from "./_components/Footer/footer";
+import { DemoBanner } from "$/src/demo/demo-banner";
 
 const config: SiteConfig = siteConfig;
 
@@ -42,6 +43,7 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
+        <DemoBanner />
         <Providers
           themeProps={{ children, attribute: "class", defaultTheme: "dark" }}
         >

@@ -8,6 +8,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { TRPCReactProvider } from "$/src/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { isDemoMode } from "$/src/demo/mode";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -17,13 +18,15 @@ export interface ProvidersProps {
 export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
 
-  return (
-    <ClerkProvider>
-      <TRPCReactProvider>
-        <NextUIProvider navigate={router.push}>
-          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-        </NextUIProvider>
-      </TRPCReactProvider>
-    </ClerkProvider>
+  const tree = (
+    <TRPCReactProvider>
+      <NextUIProvider navigate={router.push}>
+        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      </NextUIProvider>
+    </TRPCReactProvider>
   );
+
+  if (isDemoMode()) return tree;
+
+  return <ClerkProvider>{tree}</ClerkProvider>;
 }

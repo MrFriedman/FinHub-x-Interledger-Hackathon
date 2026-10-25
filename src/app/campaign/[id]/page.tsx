@@ -15,7 +15,6 @@ import {
  ModalContent,
  ModalFooter,
  ModalHeader,
- Link,
  Snippet,
 } from "@nextui-org/react";
 import { Card } from "@nextui-org/react";
@@ -54,6 +53,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
  const [step, setStep] = useState(0);
  const [donation, setDonation] = React.useState("");
  const [senderWalletAddress, setWalletAddress] = React.useState("");
+ const [pageUrl, setPageUrl] = React.useState("");
  const [refetchIncomePayment, setRefetchIncomePayment] = React.useState(false);
  const [refetchQoute, setRefetchQoute] = React.useState(false);
 
@@ -82,6 +82,11 @@ export default function Campaign({ params }: { params: { id: string } }) {
  const campaign = api.campaigns.getOne.useQuery({
    id: params.id ?? "",
  });
+
+ const transactions = api.platform.transactions.useQuery(
+   { fundingRequestId: params.id },
+   { enabled: process.env.NEXT_PUBLIC_DEMO_MODE === "true" },
+ );
 
 
  const receiverWalletDetails = api.openPayments.getWalletDetails.useQuery(
@@ -124,7 +129,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
      {
        walletAddress: senderWalletAddress,
        qouteId: qoute.data?.data.id ?? "",
-       redirectUrl: window.location.href,
+       redirectUrl: pageUrl,
        debitAmount: qoute.data?.data.debitAmount,
        receiveAmount: qoute.data?.data.receiveAmount,
      },
@@ -160,6 +165,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
 
  // The empty array makes sure this is called on the initial render only and not on subsequent ones
  useEffect(() => {
+   setPageUrl(window.location.href);
    const interactRef = searchParams.get("interact_ref");
    const continueAccessToken = localStorage.getItem("continueAccessToken");
    const continueUri = localStorage.getItem("continueUri");
@@ -187,9 +193,12 @@ export default function Campaign({ params }: { params: { id: string } }) {
 
  useEffect(() => {
    if (opAuth.interactRef) {
-     createOutgoingPayment.refetch().catch(() => {
-       console.log("Error creating outgoing payment");
-     });
+     createOutgoingPayment
+       .refetch()
+       .then(() => transactions.refetch())
+       .catch(() => {
+         console.log("Error creating outgoing payment");
+       });
      onOpOpen();
    }
  }, [opAuth]);
@@ -306,7 +315,7 @@ export default function Campaign({ params }: { params: { id: string } }) {
                    R {campaign.data?.amount}
                  </h3>
                  <Snippet symbol="" color="primary">
-                   {window.location.href}
+                   {pageUrl}
                  </Snippet>
                  <p className="text-md mt-2 ">{campaign.data?.about}</p>
                </div>
@@ -387,14 +396,39 @@ export default function Campaign({ params }: { params: { id: string } }) {
                  <div className="flex flex-col">
                    <span className="flex flex-col items-center pt-2 font-bold">
                      <Button
-                       as={Link}
                        className="col col-span-1 justify-start"
                        variant="solid"
                        color="warning"
-                       href={
-                         outgoingPaymentAuthorization.data?.data.interact
+                       isDisabled={
+                         !outgoingPaymentAuthorization.data?.data.interact
                            ?.redirect
                        }
+                       onPress={() => {
+                         const authorization =
+                           outgoingPaymentAuthorization.data?.data;
+                         const redirect = authorization?.interact?.redirect;
+                         if (!redirect) return;
+                         localStorage.setItem(
+                           "continueAccessToken",
+                           authorization.continue?.access_token?.value ?? "",
+                         );
+                         localStorage.setItem(
+                           "walletAddress",
+                           senderWalletAddress,
+                         );
+                         localStorage.setItem(
+                           "qouteId",
+                           qoute.data?.data.id ?? "",
+                         );
+                         localStorage.setItem(
+                           "continueUri",
+                           authorization.continue?.uri ?? "",
+                         );
+                         // Full navigation so a same-origin demo return reloads
+                         // and the interact_ref handler runs. Live Open Payments
+                         // redirects are external and also load as a new document.
+                         window.location.assign(redirect);
+                       }}
                      >
                        <FaLock size={15} />
                        Authorize Outgoing Payment
@@ -483,6 +517,24 @@ export default function Campaign({ params }: { params: { id: string } }) {
          </Modal>
        </CardBody>
      </Card>
+     {transactions.data?.data && transactions.data.data.length > 0 && (
+       <div className="mt-6 w-9/12 rounded-xl bg-white/10 p-4 text-foreground">
+         <h2 className="mb-3 text-lg font-semibold">Recent contributions</h2>
+         <ul className="space-y-2">
+           {transactions.data.data.map((transaction) => (
+             <li
+               key={transaction.id}
+               className="flex items-center justify-between gap-4 text-sm"
+             >
+               <span>{transaction.donorName}</span>
+               <span>
+                 R {transaction.amount} · {transaction.status}
+               </span>
+             </li>
+           ))}
+         </ul>
+       </div>
+     )}
    </Container>
  );
 }
