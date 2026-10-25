@@ -24,7 +24,7 @@ import { clsx } from "clsx";
 
 
 import { ThemeSwitch } from "$/src/app/_components/Switch/theme-switch";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "$/src/demo/auth";
 
 
 export const Navbar = () => {

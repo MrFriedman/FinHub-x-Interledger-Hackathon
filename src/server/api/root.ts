@@ -1,6 +1,7 @@
 import { usersRouter } from "$/src/server/api/routers/users";
 import { campaignsRouter } from "$/src/server/api/routers/campaigns";
 import { openPaymentsRouter } from "$/src/server/api/routers/openPayments";
+import { platformRouter } from "$/src/server/api/routers/platform";
 import { createCallerFactory, createTRPCRouter } from "$/src/server/api/trpc";
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   users: usersRouter,
   campaigns: campaignsRouter,
   openPayments: openPaymentsRouter,
+  platform: platformRouter,
 });
 
 // export type definition of API

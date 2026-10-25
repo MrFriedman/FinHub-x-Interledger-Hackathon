@@ -3,8 +3,9 @@
 "use server";
 
 import { clerkClient } from "@clerk/clerk-sdk-node";
-import { auth } from "@clerk/nextjs/server";
 import { db } from "$/src/server/db";
+import { isDemoMode } from "$/src/demo/mode";
+import { getRequestAuth } from "$/src/server/request-auth";
 import { type Response } from "$/src/utils/types";
 
 export async function updateProfile(previousState: any, formData: FormData) {
@@ -26,7 +27,7 @@ export async function updateProfile(previousState: any, formData: FormData) {
     imageUrl: formData.get("imageUrl")?.toString() ?? imageUrl,
   };
 
-  const { userId } = auth();
+  const { userId } = getRequestAuth();
 
   if (!userId) {
     response.message = "Please sign-in first";
@@ -57,12 +58,13 @@ export async function updateProfile(previousState: any, formData: FormData) {
     data: profileData,
   });
 
-  // also update the clerk metadata
-  await clerkClient.users.updateUserMetadata(userId, {
-    publicMetadata: {
-      details: profileData,
-    },
-  });
+  if (!isDemoMode()) {
+    await clerkClient.users.updateUserMetadata(userId, {
+      publicMetadata: {
+        details: profileData,
+      },
+    });
+  }
 
   return { ...response, ...{ data: user } };
 }

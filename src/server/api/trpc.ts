@@ -11,10 +11,10 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "$/src/server/db";
+import { getRequestAuth } from "$/src/server/request-auth";
 
 import { type PrismaClient } from "@prisma/client";
 import { type NextRequest } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 
 export type Context = {
   session: { sessionId: string | null; userId: string | null } | undefined;
@@ -54,8 +54,11 @@ export const createInnerTRPCContext = async (
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: { req: NextRequest }) => {
-  const { userId, sessionId } = auth();
+export const createTRPCContext = (_opts?: {
+  req?: NextRequest;
+  headers?: Headers;
+}) => {
+  const { userId, sessionId } = getRequestAuth();
 
   return createInnerTRPCContext({
     sessionId: sessionId,

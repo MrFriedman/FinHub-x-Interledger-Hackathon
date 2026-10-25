@@ -2,8 +2,14 @@ import { SignIn } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { Footer } from "$/src/app/_components/Footer/footer";
 import { karla } from "$/src/config/fonts";
+import { isDemoMode } from "$/src/demo/mode";
+import { DemoAuthScreen } from "$/src/demo/demo-auth-screen";
 
 export default function Page() {
+  if (isDemoMode()) {
+    return <DemoAuthScreen mode="sign-in" />;
+  }
+
   const css = `
         .clerk-footer {
             background: hsl(var(--nextui-primary-700));

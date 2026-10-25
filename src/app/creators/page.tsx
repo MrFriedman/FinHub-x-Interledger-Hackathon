@@ -12,7 +12,6 @@ Input,
 Image,
 useDisclosure,
 } from "@nextui-org/react";
-import { useUser } from "@clerk/nextjs";
 import { Card } from "@nextui-org/react";
 import React from "react";
 import { useFormState } from "react-dom";
@@ -23,7 +22,6 @@ import UserCard from "../_components/User/user";
 
 
 export default function Campaign({ params }: { params: { id: string } }) {
-const { user } = useUser();
 const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
 
@@ -54,8 +52,8 @@ const userIds = users.data?.data.map(user => user.userId) ?? [];
  const usersHardcode1 = [
   {
   
-    id: ids[0],
-    userId: userIds[0],
+    id: ids[0] ?? "",
+    userId: userIds[0] ?? "",
     email: "FinancialAid@uct.ac.za",
     firstName: "University of Cape Town",
     about: "UCT is a community of exceptionally talented students, teachers and researchers – and a wide range of professional, administrative support and service staff – all of whom are committed to help change this world for the better. We encourage one another to work hard, not only to earn degrees or public recognition, but also to be leaders in this increasingly changing world.",

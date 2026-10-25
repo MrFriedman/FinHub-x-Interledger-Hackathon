@@ -1,5 +1,15 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+import { resolveDemoMode } from "./demo/resolve-demo-mode.js";
+
+const publicDemoFlag = process.env.NEXT_PUBLIC_DEMO_MODE;
+const skipValidation =
+  !!process.env.SKIP_ENV_VALIDATION ||
+  publicDemoFlag === "true" ||
+  publicDemoFlag === "1" ||
+  (publicDemoFlag !== "false" &&
+    publicDemoFlag !== "0" &&
+    resolveDemoMode(process.env));
 
 export const env = createEnv({
   /**
@@ -28,7 +38,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_DEMO_MODE: z.enum(["true", "false", "1", "0"]).optional(),
   },
 
   /**
@@ -41,13 +51,14 @@ export const env = createEnv({
     OPEN_PAYMENTS_CLIENT_ADDRESS: process.env.OPEN_PAYMENTS_CLIENT_ADDRESS,
     OPEN_PAYMENTS_SECRET_KEY_PATH: process.env.OPEN_PAYMENTS_SECRET_KEY_PATH,
     OPEN_PAYMENTS_KEY_ID: process.env.OPEN_PAYMENTS_KEY_ID,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
-   * useful for Docker builds.
+   * useful for Docker builds and the secret-free Vercel demo. Demo mode also skips validation
+   * when Clerk or DATABASE_URL is missing.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation,
   /**
    * Makes it so that empty strings are treated as undefined.
    * `SOME_VAR: z.string()` and `SOME_VAR=''` will throw an error.

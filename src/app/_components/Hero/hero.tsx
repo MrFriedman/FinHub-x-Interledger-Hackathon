@@ -1,6 +1,6 @@
 import { Button, Link } from "@nextui-org/react";
 import Container from "$/src/app/_components/Container/container";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut } from "$/src/demo/auth";
 import { siteConfig } from "$/src/config/site";
 
 
